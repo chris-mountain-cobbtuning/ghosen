@@ -7,12 +7,22 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
   <DockPanel>
-    <!--
-        <DockPanel.DataContext>
-            <vm:MainWindowViewModel />
-        </DockPanel.DataContext>
-        -->
-    <ComboBox x:Name="selectedParserPlugin" DockPanel.Dock="Bottom" MaxHeight="34" ItemsSource="{Binding Plugins}" />
+    <ComboBox x:Name="selectedParserPlugin" DockPanel.Dock="Top" MaxHeight="34" ItemsSource="{Binding Plugins}" />
+
+    <GroupBox Header="Arb ID Pairs (Request, Response)" DockPanel.Dock="Top" MaxHeight="160">
+      <DataGrid x:Name="arbIdGrid" ItemsSource="{Binding ArbIdPairs}" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True">
+        <DataGrid.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Add Pair" Click="AddArbIdPair_Click" />
+            <MenuItem Header="Remove Selected" Click="RemoveArbIdPair_Click" />
+          </ContextMenu>
+        </DataGrid.ContextMenu>
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Request ID (hex)" Binding="{Binding RequestIdHex, UpdateSourceTrigger=LostFocus}" Width="*" />
+          <DataGridTextColumn Header="Response ID (hex)" Binding="{Binding ResponseIdHex, UpdateSourceTrigger=LostFocus}" Width="*" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </GroupBox>
 
     <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding Strings}" Drop="DropHandler" AllowDrop="True">
       <ListView.ItemTemplate>

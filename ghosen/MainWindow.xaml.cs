@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 
+using System.Windows.Input;
+
 namespace ghosen
 {
   /// <summary>
@@ -21,15 +23,16 @@ namespace ghosen
 
       vm = new ViewModels.MainWindowViewModel();
       this.DataContext = vm;
+
     }
 
     private void DropHandler(object sender, DragEventArgs e)
     {
-      if (e.Data.GetDataPresent(DataFormats.FileDrop))
+      if ((e.Data.GetDataPresent(DataFormats.FileDrop)) && (selectedParserPlugin.SelectedItem !=null))
       {
         string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-        var filter = new Plugins.ArbIdFilter(new List<uint>() { 0x7E0, 0x7E8 });
+        var filter = vm.BuildFilter();
         // Assuming you have one file that you care about, pass it off to whatever
         // handling code you have defined.
         var candumpLines = File.ReadAllLines(files[0]);
@@ -48,11 +51,25 @@ namespace ghosen
         {
           vm.Strings.Add(item.ToString());
         }
+        File.WriteAllLines(files[0] + "_parsed.txt", vm.Strings.Select(item => item.ToString()));
+
       }
     }
+    private void AddArbIdPair_Click(object sender, RoutedEventArgs e)
+    {
+      vm.ArbIdPairs.Add(new ArbIdPair(0x000, 0x000));
+    }
+
+    private void RemoveArbIdPair_Click(object sender, RoutedEventArgs e)
+    {
+      if (arbIdGrid.SelectedItem is ArbIdPair selected)
+        vm.ArbIdPairs.Remove(selected);
+    }
+
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
       return;
+
       /*
       var a = CandumpParser.ParseLines(candumpLines, filter);
 

@@ -11,7 +11,9 @@ namespace ghosen.ISO14229
     public ServiceMessageType MessageType { get; set; }
     public byte[] Data { get; set; }
 
-    public ISO14229Message(ISO_TP.Message msg)
+    public uint ArbId { get; set; }
+
+   public ISO14229Message(ISO_TP.Message msg)
     {
       if (msg.Payload[0] > 0x3F)
       {
@@ -26,11 +28,12 @@ namespace ghosen.ISO14229
         MessageType = ServiceMessageType.Request;
         Data = msg.Payload;
       }
+      ArbId = msg.ArbId.Id;
     }
 
     public override string ToString()
     {
-      return $"{Enum.GetName(typeof(ServiceType), Service)}{MessageType} : Len {Data.Length} : {{{Utils.ByteArrayToHexViaLookup32(Data)}}}";
+      return $"ArbId: 0x{ArbId:X}, {Enum.GetName(typeof(ServiceType), Service)}{MessageType} : Len {Data.Length} : {{{Utils.ByteArrayToHexViaLookup32(Data)}}}";
     }
 
     internal static ISO14229Message Create(Message message)
